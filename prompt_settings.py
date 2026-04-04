@@ -46,9 +46,9 @@ def update_variables(settings: Dict, prompt_settings: Dict | None):
 
 
 @hook(priority=10)
-def before_cat_reads_message(user_message: UserMessage, cat):
+async def before_cat_reads_message(user_message: UserMessage, cat):
     global tags
-    settings = cat.mad_hatter.get_plugin().load_settings()
+    settings = await cat.mad_hatter.get_plugin().load_settings()
     prompt_settings = None
     tags = {}
     if "prompt_settings" in user_message:
@@ -114,11 +114,11 @@ def agent_fast_reply(cat) -> AgenticWorkflowOutput | None:
 
 
 @hook
-def after_cat_recalls_memories(config: RecallSettings, cat) -> None:
+async def after_cat_recalls_memories(config: RecallSettings, cat) -> None:
     global metadata_or_filter, threshold, number_of_memory_items
 
     if not metadata_or_filter or not (tags_ := getattr(cat.working_memory.user_message, "tags")):
         return
 
     config.metadata |= tags_
-    cat.recall_context_to_working_memory(config)
+    await cat.recall_context_to_working_memory(config)
