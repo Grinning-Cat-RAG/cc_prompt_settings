@@ -117,7 +117,7 @@ def agent_fast_reply(cat) -> AgenticWorkflowOutput | None:
 async def after_cat_recalls_memories(config: RecallSettings, cat) -> None:
     global metadata_or_filter, threshold, number_of_memory_items
 
-    if not metadata_or_filter or not (tags_ := getattr(cat.working_memory.user_message, "tags")):
+    if not metadata_or_filter or not (tags_ := cat.working_memory.user_message.get("tags")):
         return
 
     config.metadata |= tags_
