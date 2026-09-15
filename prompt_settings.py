@@ -20,6 +20,10 @@ async def agent_prompt_prefix(prefix: str, cat: StrayCat) -> str:
     settings = await cat.plugin_manager.get_plugin().load_settings()
 
     prefix = settings["prompt_prefix"]
+    # Escape curly braces to prevent LangChain PromptTemplate from
+    # interpreting them as format placeholders (e.g. JSON {…} in the
+    # custom prompt would otherwise cause KeyError at LLM invocation).
+    prefix = prefix.replace("{", "{{").replace("}", "}}")
     return prefix
 
 
