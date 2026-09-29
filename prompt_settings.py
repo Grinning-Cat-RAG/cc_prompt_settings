@@ -62,6 +62,10 @@ async def before_cat_recalls_memories(config: RecallSettings, cat: StrayCat) -> 
 
 @hook(priority=1)
 async def agent_fast_reply(cat: StrayCat) -> AgenticWorkflowOutput | None:
+    # a message blocked by guard-plugin is not worked on: its reply is the block
+    if getattr(cat.working_memory, "guard_blocked", None) == id(cat.working_memory.user_message):
+        return None
+
     settings = await cat.plugin_manager.get_plugin().load_settings()
 
     if not settings["only_local_responses"]:
